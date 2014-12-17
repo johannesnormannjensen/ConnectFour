@@ -69,11 +69,8 @@ public class Network implements Runnable {
 						data = packet.getData();
 						String request = new String(data, 0, packet.getLength());
 						System.out.println("Server got msg: " + packet.getAddress().getHostAddress() + " : " + packet.getPort() + " - " + request);
-						request = handleMsg(request);
-						DatagramPacket dp = new DatagramPacket(request.getBytes(), request.getBytes().length, packet.getAddress(), packet.getPort());
-						socket.send(dp);
-						if (request.equals("ACK END GAME"))
-							System.exit(0);
+						setSendIP(packet.getAddress().getHostAddress());
+						handleMsg(request);
 					} catch (Exception e) {
 						System.out.println(e.getMessage());
 					}
@@ -86,25 +83,42 @@ public class Network implements Runnable {
 
 	}
 
-	private String handleMsg(String req) {
-		if (req.equals("NEW GAME") && !ingame) {
+	private static void handleMsg(String s) {
+		if (s.equals("NEW GAME") && !ingame) {
+			sendIt("ACK NEW GAME");
 			ingame = true;
 			GameFrame.Instance();
-			return "ACK GAME";
 		}
-		if (req.startsWith("PLACE", 4)) {
-			System.out.println("he want's to place");
-			return "you can place";
+		else if (s.startsWith("MOVE", 4)) {
+			System.out.println("he want's to place " + s.charAt(s.length()-1));
+			sendIt("ACK MOVE " + s.charAt(s.length()-1));
 		}
-		if (req.equals("END GAME") && ingame) {
-			return "ACK END GAME";
-		} else
-			return "";
+		else if (s.startsWith("ACK MOVE", 8)) {
+			System.out.println("It got placed");
+		}
+		else if (s.equals("END GAME") && ingame) {
+			sendIt("ACK END GAME");
+		}
+		else if (s.equals("ACK NEW GAME")) {
+			GameFrame.Instance();
+		}
+		else if (s.equals("ACK END GAME")) {
+			System.exit(0);
+		}
 	}
 	
 	public static void sendMsg(MESSAGE msg, String msgString)
 	{
-		//TODO do something here
+		switch(msg)
+		{
+		case NEWGAME: sendIt("NEW GAME");
+		case ACKNEWGAME: sendIt("ACK NEW GAME");
+		case ENDGAME: sendIt("ACK END GAME");
+		case ENDGAME: sendIt("ACK END GAME");
+		default:
+			break;
+		
+		}
 	}
 
 	private static void sendIt(String s) {
@@ -125,7 +139,7 @@ public class Network implements Runnable {
 
 			byte[] data = reply.getData();
 			s = new String(data, 0, reply.getLength());
-			handleRep(s);
+			handleMsg(s);
 			System.out.println("Client received: " + reply.getAddress().getHostAddress() + " : " + reply.getPort() + " - " + s);
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
@@ -139,17 +153,6 @@ public class Network implements Runnable {
 			sendIP = InetAddress.getByName(_sendIP);
 		} catch (UnknownHostException e) {
 			System.out.println("Could not connect to IP: " + _sendIP);
-		}
-	}
-
-	public static void handleRep(String s) {
-		//TODO do something here
-		
-		if (s.equals("ACK GAME")) {
-			GameFrame.Instance();
-		}
-		if (s.equals("ACK END GAME")) {
-			System.exit(0);
 		}
 	}
 	

@@ -9,6 +9,7 @@ import javax.swing.JLabel;
 //import connectfour.domain.johannes.Client;
 import connectfour.domain.johannes.Game;
 import connectfour.domain.johannes.Network;
+import connectfour.domain.johannes.Network.MESSAGE;
 
 public class GameFrame
 {
@@ -85,33 +86,38 @@ public class GameFrame
 
 	public void move(int ind)
 	{
+		btns[findCol(ind)].setText("X");
+	}
+	
+	private int findCol(int num)
+	{
 		int a = 1;
-		if (ind > 6)
+		if (num > 6)
 			a = 7;
-		if (ind > 12)
+		if (num > 12)
 			a = 13;
-		if (ind > 18)
+		if (num > 18)
 			a = 19;
-		if (ind > 24)
+		if (num > 24)
 			a = 25;
-		if (ind > 30)
+		if (num > 30)
 			a = 31;
-		if (ind > 36)
+		if (num > 36)
 			a = 37;
 		for (int i = a + 5; i >= a; i--)
 		{
 			if (btns[i].getText().equals(""))
 			{
-				btns[i].setText("X");
-				break;
+				return i;
 			}
 		}
+		return a;
 	}
 
 	public void buttonClick(int ind)
 	{
 		//TODO do something here
-		Network.sendMsg()
+		Network.sendMsg(MESSAGE.MOVECOLUMN, Integer.toString((findCol(ind))));
 //		move(ind);
 		System.out.println(ind);
 	}
