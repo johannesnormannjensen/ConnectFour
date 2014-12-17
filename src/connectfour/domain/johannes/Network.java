@@ -21,7 +21,7 @@ public class Network implements Runnable {
 	private static boolean ingame = false;
 	private static boolean bListening = false;
 	
-	static DatagramSocket socketListen = null;
+	static DatagramSocket socket = null;
 	
 	private static int listentimeout_ms = 2000;
 
@@ -47,8 +47,8 @@ public class Network implements Runnable {
 	@Override
 	public void run() {
 		try {
-			socketListen = new DatagramSocket(port);
-			socketListen.setSoTimeout(listentimeout_ms);
+			socket = new DatagramSocket(port);
+			socket.setSoTimeout(listentimeout_ms);
 			
 			byte[] buf = new byte[1024];
 			byte[] data;
@@ -57,22 +57,22 @@ public class Network implements Runnable {
 			System.out.println("Server socket created.");
 			while (true) {
 				if (bListening) {
-					if(socketListen.isClosed())
+					if(socket.isClosed())
 					{
-						socketListen = new DatagramSocket(port);
-						socketListen.setSoTimeout(listentimeout_ms);
+						socket = new DatagramSocket(port);
+						socket.setSoTimeout(listentimeout_ms);
 					}
 					
-					if(socketListen.isConnected())
+					if(socket.isConnected())
 					{
 						System.out.println("Waiting for incoming data...");
-						socketListen.receive(packet);
+						socket.receive(packet);
 						data = packet.getData();
 						String request = new String(data, 0, packet.getLength());
 						System.out.println("Server got msg: " + packet.getAddress().getHostAddress() + " : " + packet.getPort() + " - " + request);
 						request = handleMsg(request);
 						DatagramPacket dp = new DatagramPacket(request.getBytes(), request.getBytes().length, packet.getAddress(), packet.getPort());
-						socketListen.send(dp);
+						socket.send(dp);
 						if (request.equals("ACK END GAME"))
 							System.exit(0);
 					}
@@ -108,29 +108,30 @@ public class Network implements Runnable {
 	}
 
 	public static void sendIt(String s) {
-		DatagramSocket socketSend = null;
-		socketListen.close();
+		socket.close();
 		bListening = false;
 		try {
-			socketSend = new DatagramSocket();
-			socketSend.setSoTimeout(listentimeout_ms);
+			socket = new DatagramSocket();
+			socket.setSoTimeout(listentimeout_ms);
 			byte[] buf = s.getBytes();
 			DatagramPacket packet = new DatagramPacket(buf, buf.length, InetAddress.getByName(sendIP.getHostAddress()), port);
-			socketSend.send(packet);
+			System.out.println("Sending...");
+			socket.send(packet);
 
 			byte[] buffer = new byte[1024];
 			DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
-			socketSend.receive(reply);
+			System.out.println("Waiting for reply...");
+			socket.receive(reply);
 
 			byte[] data = reply.getData();
 			s = new String(data, 0, reply.getLength());
 			handleRep(s);
 			System.out.println("Client received: " + reply.getAddress().getHostAddress() + " : " + reply.getPort() + " - " + s);
 		} catch (IOException e) {
-			System.out.println("Couldn't send packet");
+			System.out.println(e.getMessage());
 			e.printStackTrace();
 		}
-		socketSend.close();
+		socket.close();
 		bListening = true;
 	}
 
