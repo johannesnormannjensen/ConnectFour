@@ -2,14 +2,17 @@ package connectfour.gui.johannes;
 
 import javax.swing.JFrame;
 import javax.swing.JButton;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+
 import javax.swing.JLabel;
+
 
 //import connectfour.domain.johannes.Client;
 import connectfour.domain.johannes.Game;
+import connectfour.domain.johannes.MESSAGE;
 import connectfour.domain.johannes.Network;
-import connectfour.domain.johannes.Network.MESSAGE;
 
 public class GameFrame
 {

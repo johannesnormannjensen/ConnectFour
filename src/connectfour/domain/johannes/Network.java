@@ -112,9 +112,8 @@ public class Network implements Runnable {
 		switch(msg)
 		{
 		case NEWGAME: sendIt("NEW GAME");
-		case ACKNEWGAME: sendIt("ACK NEW GAME");
 		case ENDGAME: sendIt("ACK END GAME");
-		case ENDGAME: sendIt("ACK END GAME");
+		case MOVECOLUMN: do sumting hannaaaa!
 		default:
 			break;
 		
@@ -155,6 +154,4 @@ public class Network implements Runnable {
 			System.out.println("Could not connect to IP: " + _sendIP);
 		}
 	}
-	
-	public enum MESSAGE { NEWGAME, ACKNEWGAME, ENDGAME, ACKENDGAME, MOVECOLUMN };
 }
