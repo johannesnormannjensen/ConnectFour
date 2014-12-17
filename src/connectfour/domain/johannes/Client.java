@@ -27,7 +27,7 @@ public class Client
 			socketSend = new DatagramSocket();
 			byte[] buf = s.getBytes();
 			DatagramPacket packet = new DatagramPacket(buf, buf.length,
-					InetAddress.getByName("localhost"), sendPort);
+					InetAddress.getByName(sendIP.getHostAddress()), sendPort);
 			socketSend.send(packet);
 
 			byte[] buffer = new byte[1024];
