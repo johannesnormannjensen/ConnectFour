@@ -1,5 +1,6 @@
 package connectfour.domain.johannes;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -16,7 +17,7 @@ public class Network implements Runnable {
 	// private HashMap<String, String> protocol = new HashMap<String, String>();
 
 	public static InetAddress sendIP;
-	private static int port;
+	private static final int port = 1337;
 
 	private static boolean ingame = false;
 	private static boolean bListening = false;
@@ -25,11 +26,7 @@ public class Network implements Runnable {
 	
 	private static int listentimeout_ms = 5000;
 
-	public Network(int receive) {
-		// protocol.put("NEW GAME", "ACK NEW GAME");
-		// protocol.put("END GAME", "ACK END GAME");
-		// protocol.put("NEW GAME", "ACK NEW GAME");
-		Network.port = receive;
+	public Network() {
 		this.run();
 	}
 
@@ -88,17 +85,17 @@ public class Network implements Runnable {
 		if (s.equals("NEW GAME") && !ingame) {
 			sendIt("ACK NEW GAME");
 			ingame = true;
-			GameFrame.Instance();
+			GameFrame.Instance().initialize("X", Color.BLUE, "O", Color.RED);
 		}
 		if (s.equals("ACK NEW GAME")) {
 			ingame = true;
-			GameFrame.Instance();
+			GameFrame.Instance().initialize("O", Color.RED, "X", Color.BLUE);
 		}
 //		-------------------------------------------
 		if (s.startsWith("MOVE")) {
-			System.out.println("he want's to place " + s.charAt(s.length()-1));
-			GameFrame.Instance().move(Integer.parseInt(s.substring(s.length()-1)));
-			sendIt("ACK MOVE " + s.charAt(s.length()-1));
+			System.out.println("he want's to place " + s.substring(s.length()-2).trim());
+			GameFrame.Instance().move(Integer.parseInt(s.substring(s.length()-2).trim()), false);
+			sendIt("ACK MOVE " + s.substring(s.length()-2).trim());
 		}
 		if (s.startsWith("ACK MOVE")) {
 			System.out.println("It got placed");
@@ -130,7 +127,7 @@ public class Network implements Runnable {
 		socket.close();
 		bListening = false;
 		try {
-			socket = new DatagramSocket();
+			socket = new DatagramSocket(port);
 			socket.setSoTimeout(listentimeout_ms);
 			byte[] buf = s.getBytes();
 			DatagramPacket packet = new DatagramPacket(buf, buf.length, sendIP, port);
@@ -156,7 +153,7 @@ public class Network implements Runnable {
 	public static void setSendIP(String _sendIP) {
 		try {
 			sendIP = InetAddress.getByName(_sendIP);
-			System.out.println("Setting new sendIP: " + sendIP + "(from " + _sendIP + ")");
+			System.out.println("Setting new sendIP: " + sendIP + " (from " + _sendIP + ")");
 		} catch (UnknownHostException e) {
 			System.out.println("Could not connect to IP: " + _sendIP);
 		}

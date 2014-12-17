@@ -3,10 +3,13 @@ package connectfour.gui.johannes;
 import javax.swing.JFrame;
 import javax.swing.JButton;
 
+import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 import javax.swing.JLabel;
+
+
 
 
 //import connectfour.domain.johannes.Client;
@@ -20,6 +23,9 @@ public class GameFrame
 	private JFrame frame;
 	private int[][] pos = new int[7][6];
 	private JButton[] btns = new JButton[43];
+	
+	private Color myColor, opponentColor;
+	private String myString, opponentString;
 
 	private GameFrame()
 	{
@@ -87,9 +93,18 @@ public class GameFrame
 		return btnNewButton;
 	}
 
-	public void move(int ind)
+	public void move(int ind, boolean myMove)
 	{
-		btns[findCol(ind)].setText("X");
+		if(myMove)
+		{
+			btns[findCol(ind)].setText(myString);
+			btns[findCol(ind)].setForeground(myColor);
+		}
+		else 
+		{
+			btns[findCol(ind)].setText(opponentString);
+			btns[findCol(ind)].setForeground(opponentColor);
+		}
 	}
 	
 	private int findCol(int num)
@@ -121,7 +136,15 @@ public class GameFrame
 	{
 		//TODO do something here
 		Network.sendMsg(MESSAGE.MOVE, Integer.toString(ind));
-		move(ind);
+		move(ind, true);
 		System.out.println(ind);
+	}
+
+	public void initialize(String myName, Color c, String opponentName, Color c2) 
+	{
+		myColor = c;
+		myString = myName;
+		opponentString = opponentName;
+		opponentColor = c2;
 	}
 }
