@@ -63,19 +63,16 @@ public class Network implements Runnable {
 						socket.setSoTimeout(listentimeout_ms);
 					}
 					
-					if(socket.isConnected())
-					{
-						System.out.println("Waiting for incoming data...");
-						socket.receive(packet);
-						data = packet.getData();
-						String request = new String(data, 0, packet.getLength());
-						System.out.println("Server got msg: " + packet.getAddress().getHostAddress() + " : " + packet.getPort() + " - " + request);
-						request = handleMsg(request);
-						DatagramPacket dp = new DatagramPacket(request.getBytes(), request.getBytes().length, packet.getAddress(), packet.getPort());
-						socket.send(dp);
-						if (request.equals("ACK END GAME"))
-							System.exit(0);
-					}
+					System.out.println("Waiting for incoming data...");
+					socket.receive(packet);
+					data = packet.getData();
+					String request = new String(data, 0, packet.getLength());
+					System.out.println("Server got msg: " + packet.getAddress().getHostAddress() + " : " + packet.getPort() + " - " + request);
+					request = handleMsg(request);
+					DatagramPacket dp = new DatagramPacket(request.getBytes(), request.getBytes().length, packet.getAddress(), packet.getPort());
+					socket.send(dp);
+					if (request.equals("ACK END GAME"))
+						System.exit(0);
 				}
 			}
 
@@ -129,7 +126,6 @@ public class Network implements Runnable {
 			System.out.println("Client received: " + reply.getAddress().getHostAddress() + " : " + reply.getPort() + " - " + s);
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
-			e.printStackTrace();
 		}
 		socket.close();
 		bListening = true;
