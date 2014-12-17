@@ -48,7 +48,7 @@ public class Network implements Runnable {
 	public void run() {
 		try {
 			socket = new DatagramSocket(port);
-			socket.setSoTimeout(listentimeout_ms);
+			socket.setSoTimeout(0);
 			
 			byte[] buf = new byte[1024];
 			byte[] data;
@@ -60,27 +60,25 @@ public class Network implements Runnable {
 					if(socket.isClosed())
 					{
 						socket = new DatagramSocket(port);
-						socket.setSoTimeout(listentimeout_ms);
+						socket.setSoTimeout(0);
 					}
 					
-					System.out.println("Waiting for incoming data...");
-					socket.receive(packet);
-					data = packet.getData();
-					String request = new String(data, 0, packet.getLength());
-					System.out.println("Server got msg: " + packet.getAddress().getHostAddress() + " : " + packet.getPort() + " - " + request);
-					request = handleMsg(request);
-					DatagramPacket dp = new DatagramPacket(request.getBytes(), request.getBytes().length, packet.getAddress(), packet.getPort());
-					socket.send(dp);
-					if (request.equals("ACK END GAME"))
-						System.exit(0);
+					try {
+						System.out.println("Waiting for incoming data...");
+						socket.receive(packet);
+						data = packet.getData();
+						String request = new String(data, 0, packet.getLength());
+						System.out.println("Server got msg: " + packet.getAddress().getHostAddress() + " : " + packet.getPort() + " - " + request);
+						request = handleMsg(request);
+						DatagramPacket dp = new DatagramPacket(request.getBytes(), request.getBytes().length, packet.getAddress(), packet.getPort());
+						socket.send(dp);
+						if (request.equals("ACK END GAME"))
+							System.exit(0);
+					} catch (Exception e) {
+						System.out.println(e.getMessage());
+					}
+					
 				}
-			}
-
-		} catch (SocketException e) {
-			if(!bListening)
-			{
-				System.out.println("Error when waiting for incoming data.");
-				e.printStackTrace();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -103,8 +101,13 @@ public class Network implements Runnable {
 		} else
 			return "";
 	}
+	
+	public static void sendMsg(MESSAGE msg, String msgString)
+	{
+		//TODO do something here
+	}
 
-	public static void sendIt(String s) {
+	private static void sendIt(String s) {
 		socket.close();
 		bListening = false;
 		try {
@@ -140,6 +143,8 @@ public class Network implements Runnable {
 	}
 
 	public static void handleRep(String s) {
+		//TODO do something here
+		
 		if (s.equals("ACK GAME")) {
 			GameFrame.Instance();
 		}
@@ -147,5 +152,6 @@ public class Network implements Runnable {
 			System.exit(0);
 		}
 	}
-
+	
+	public enum MESSAGE { NEWGAME, ACKNEWGAME, ENDGAME, ACKENDGAME, MOVECOLUMN };
 }

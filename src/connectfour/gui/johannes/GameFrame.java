@@ -56,8 +56,7 @@ public class GameFrame
 			for (int j = 0; j < 6; j++)
 			{
 				pos[i][j] = a;
-				JButton newButton = createButton(10 + i * 50, 11 + j * 51, 45,
-						45, a);
+				JButton newButton = createButton(10 + i * 50, 11 + j * 51, 45, 45, a);
 				btns[a] = newButton;
 				frame.getContentPane().add(newButton);
 				a++;
@@ -107,12 +106,13 @@ public class GameFrame
 				break;
 			}
 		}
-
 	}
 
 	public void buttonClick(int ind)
 	{
-		move(ind);
+		//TODO do something here
+		Network.sendMsg()
+//		move(ind);
 		System.out.println(ind);
 	}
 }
