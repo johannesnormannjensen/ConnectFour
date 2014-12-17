@@ -120,8 +120,8 @@ public class GameFrame
 	public void buttonClick(int ind)
 	{
 		//TODO do something here
-		Network.sendMsg(MESSAGE.MOVECOLUMN, Integer.toString((findCol(ind))));
-//		move(ind);
+		Network.sendMsg(MESSAGE.MOVE, Integer.toString(ind));
+		move(ind);
 		System.out.println(ind);
 	}
 }

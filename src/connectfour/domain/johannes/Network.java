@@ -23,7 +23,7 @@ public class Network implements Runnable {
 	
 	static DatagramSocket socket = null;
 	
-	private static int listentimeout_ms = 2000;
+	private static int listentimeout_ms = 5000;
 
 	public Network(int receive) {
 		// protocol.put("NEW GAME", "ACK NEW GAME");
@@ -117,8 +117,8 @@ public class Network implements Runnable {
 		switch(msg)
 		{
 		case NEWGAME: sendIt("NEW GAME");
-		case ENDGAME: sendIt("ACK END GAME");
-		case MOVECOLUMN: sendIt("MOVE " + msgString);
+		case ENDGAME: sendIt("END GAME");
+		case MOVE: sendIt("MOVE " + msgString);
 		default:
 			break;
 		
