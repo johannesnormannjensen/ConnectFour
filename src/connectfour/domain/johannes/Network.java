@@ -126,8 +126,7 @@ public class Network implements Runnable
 			byte[] data = reply.getData();
 			s = new String(data, 0, reply.getLength());
 			handleRep(s);
-			System.out.println("Client received: "
-					+ reply.getAddress().getHostAddress() + " : "
+			System.out.println("Client received: " + reply.getAddress().getHostAddress() + " : "
 					+ reply.getPort() + " - " + s);
 		} catch (IOException e)
 		{
