@@ -89,18 +89,22 @@ public class Network implements Runnable {
 			ingame = true;
 			GameFrame.Instance();
 		}
+		else if (s.equals("ACK NEW GAME")) {
+			GameFrame.Instance();
+		}
+//		-------------------------------------------
 		else if (s.startsWith("MOVE", 4)) {
 			System.out.println("he want's to place " + s.charAt(s.length()-1));
+			GameFrame.Instance().move(Integer.parseInt(s.substring(s.length()-1)));
 			sendIt("ACK MOVE " + s.charAt(s.length()-1));
 		}
 		else if (s.startsWith("ACK MOVE", 8)) {
 			System.out.println("It got placed");
 		}
+//		-------------------------------------------
 		else if (s.equals("END GAME") && ingame) {
 			sendIt("ACK END GAME");
-		}
-		else if (s.equals("ACK NEW GAME")) {
-			GameFrame.Instance();
+			System.exit(0);
 		}
 		else if (s.equals("ACK END GAME")) {
 			System.exit(0);
@@ -113,7 +117,7 @@ public class Network implements Runnable {
 		{
 		case NEWGAME: sendIt("NEW GAME");
 		case ENDGAME: sendIt("ACK END GAME");
-		case MOVECOLUMN: do sumting hannaaaa!
+		case MOVECOLUMN: sendIt("MOVE " + msgString);
 		default:
 			break;
 		
