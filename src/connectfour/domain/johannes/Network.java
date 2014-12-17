@@ -66,6 +66,7 @@ public class Network implements Runnable {
 					try {
 						System.out.println("Listening for incoming data...");
 						socket.receive(packet);
+						Thread.currentThread().sleep(1000);
 						data = packet.getData();
 						String request = new String(data, 0, packet.getLength());
 						System.out.println("Server got msg: " + packet.getAddress().getHostAddress() + " : " + packet.getPort() + " - " + request);
@@ -89,25 +90,25 @@ public class Network implements Runnable {
 			ingame = true;
 			GameFrame.Instance();
 		}
-		else if (s.equals("ACK NEW GAME")) {
+		if (s.equals("ACK NEW GAME")) {
 			ingame = true;
 			GameFrame.Instance();
 		}
 //		-------------------------------------------
-		else if (s.startsWith("MOVE", 4)) {
+		if (s.startsWith("MOVE")) {
 			System.out.println("he want's to place " + s.charAt(s.length()-1));
 			GameFrame.Instance().move(Integer.parseInt(s.substring(s.length()-1)));
 			sendIt("ACK MOVE " + s.charAt(s.length()-1));
 		}
-		else if (s.startsWith("ACK MOVE", 8)) {
+		if (s.startsWith("ACK MOVE")) {
 			System.out.println("It got placed");
 		}
 //		-------------------------------------------
-		else if (s.equals("END GAME") && ingame) {
+		if (s.equals("END GAME") && ingame) {
 			sendIt("ACK END GAME");
 			System.exit(0);
 		}
-		else if (s.equals("ACK END GAME")) {
+		if (s.equals("ACK END GAME")) {
 			System.exit(0);
 		}
 	}
@@ -116,9 +117,9 @@ public class Network implements Runnable {
 	{
 		switch(msg)
 		{
-		case NEWGAME: sendIt("NEW GAME");
-		case ENDGAME: sendIt("END GAME");
-		case MOVE: sendIt("MOVE " + msgString);
+		case NEWGAME: sendIt("NEW GAME"); break;
+		case ENDGAME: sendIt("END GAME"); break;
+		case MOVE: sendIt("MOVE " + msgString); break;
 		default:
 			break;
 		
@@ -135,7 +136,7 @@ public class Network implements Runnable {
 			DatagramPacket packet = new DatagramPacket(buf, buf.length, sendIP, port);
 			System.out.println("Sending message (" + s + ")...");
 			socket.send(packet);
-			Thread.currentThread().sleep(1000);
+			
 			byte[] buffer = new byte[1024];
 			DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
 			System.out.println("Waiting for reply on message (" + s + ")...");
@@ -147,8 +148,6 @@ public class Network implements Runnable {
 			System.out.println("Client received: " + reply.getAddress().getHostAddress() + " : " + reply.getPort() + " - " + s);
 		} catch (IOException e) {
 			System.out.println("Exception in sendIt(String s): " + e.getMessage());
-		} catch (InterruptedException e) {
-			e.printStackTrace();
 		}
 		socket.close();
 		bListening = true;
