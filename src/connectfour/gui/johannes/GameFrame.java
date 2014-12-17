@@ -22,7 +22,7 @@ public class GameFrame
 	private static GameFrame instance;
 	private JFrame frame;
 	private int[][] pos = new int[7][6];
-	private JButton[] btns = new JButton[43];
+	private JButton[] btns = new JButton[42];
 	
 	private Color myColor, opponentColor;
 	private String myString, opponentString;
@@ -60,7 +60,7 @@ public class GameFrame
 //		});
 //		frame.getContentPane().add(btnGiveUp);
 
-		int a = 1;
+		int a = 0;
 		for (int i = 0; i < 7; i++)
 		{
 			for (int j = 0; j < 6; j++)
@@ -97,32 +97,35 @@ public class GameFrame
 	{
 		if(myMove)
 		{
-			btns[findCol(ind)].setText(myString);
-			btns[findCol(ind)].setForeground(myColor);
+			int u = findCol(ind); 
+			btns[u].setText(myString);
+			btns[u].setBackground(myColor);
 		}
 		else 
 		{
-			btns[findCol(ind)].setText(opponentString);
-			btns[findCol(ind)].setForeground(opponentColor);
+			int u = findCol(ind); 
+			btns[u].setText(opponentString);
+			btns[u].setBackground(opponentColor);
 		}
 	}
 	
 	private int findCol(int num)
 	{
-		int a = 1;
-		if (num > 6)
-			a = 7;
-		if (num > 12)
-			a = 13;
-		if (num > 18)
-			a = 19;
-		if (num > 24)
-			a = 25;
-		if (num > 30)
-			a = 31;
-		if (num > 36)
-			a = 37;
-		for (int i = a + 5; i >= a; i--)
+		int a = Math.round((float)num/6f - 0.5f);
+//		int a = 1;
+//		if (num > 6)
+//			a = 7;
+//		if (num > 12)
+//			a = 13;
+//		if (num > 18)
+//			a = 19;
+//		if (num > 24)
+//			a = 25;
+//		if (num > 30)
+//			a = 31;
+//		if (num > 36)
+//			a = 37;
+		for (int i = a*6 + 5; i >= a; i--)
 		{
 			if (btns[i].getText().equals(""))
 			{
