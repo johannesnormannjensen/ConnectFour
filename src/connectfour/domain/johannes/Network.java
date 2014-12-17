@@ -69,7 +69,7 @@ public class Network implements Runnable {
 						data = packet.getData();
 						String request = new String(data, 0, packet.getLength());
 						System.out.println("Server got msg: " + packet.getAddress().getHostAddress() + " : " + packet.getPort() + " - " + request);
-						setSendIP(packet.getAddress().getHostAddress());
+						setSendIP(packet.getAddress());
 						handleMsg(request);
 					} catch (Exception e) {
 						System.out.println("Exception in run(): " + e.getMessage());
@@ -132,7 +132,7 @@ public class Network implements Runnable {
 			socket = new DatagramSocket();
 			socket.setSoTimeout(listentimeout_ms);
 			byte[] buf = s.getBytes();
-			DatagramPacket packet = new DatagramPacket(buf, buf.length, InetAddress.getByName(sendIP.getHostAddress()), port);
+			DatagramPacket packet = new DatagramPacket(buf, buf.length, sendIP, port);
 			System.out.println("Sending message (" + s + ")...");
 			socket.send(packet);
 
@@ -152,11 +152,8 @@ public class Network implements Runnable {
 		bListening = true;
 	}
 
-	public static void setSendIP(String _sendIP) {
-		try {
-			sendIP = InetAddress.getByName(_sendIP);
-		} catch (UnknownHostException e) {
-			System.out.println("Could not connect to IP: " + _sendIP);
-		}
+	public static void setSendIP(InetAddress _sendIP) {
+		sendIP = _sendIP;
+		System.out.println("Setting new sendIP: " + sendIP.getHostAddress());
 	}
 }
