@@ -9,8 +9,9 @@ import javax.swing.JButton;
 import javax.swing.JTextField;
 
 import connectfour.domain.johannes.Game;
-import connectfour.domain.johannes.Server;
-import connectfour.domain.johannes.Client;
+import connectfour.domain.johannes.Network;
+//import connectfour.domain.johannes.Server;
+//import connectfour.domain.johannes.Client;
 
 public class MainMenu
 {
@@ -25,7 +26,7 @@ public class MainMenu
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 
-		JLabel lblYourIp = new JLabel("Your IP: " + Server.getLocIp());
+		JLabel lblYourIp = new JLabel("Your IP: " + Network.getLocIp());
 		lblYourIp.setBounds(10, 10, 150, 14);
 		frame.getContentPane().add(lblYourIp);
 
@@ -38,7 +39,7 @@ public class MainMenu
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				Client.setSendIP(txtEx.getText());
+				Network.setSendIP(txtEx.getText());
 				Game.newGame();
 			}
 		});

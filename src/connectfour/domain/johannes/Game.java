@@ -4,11 +4,11 @@ public class Game
 {
 	public static void newGame()
 	{
-		Client.sendIt("NEW GAME");
+		Network.sendIt("NEW GAME");
 	}
 
 	public static void endGame()
 	{
-		Client.sendIt("END GAME");
+		Network.sendIt("END GAME");
 	}
 }
