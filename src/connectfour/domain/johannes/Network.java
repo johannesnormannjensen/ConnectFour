@@ -45,7 +45,7 @@ public class Network implements Runnable {
 	public void run() {
 		try {
 			socket = new DatagramSocket(port);
-			socket.setSoTimeout(listentimeout_ms);
+//			socket.setSoTimeout(listentimeout_ms);
 			
 			byte[] buf = new byte[1024];
 			byte[] data;
@@ -56,14 +56,15 @@ public class Network implements Runnable {
 				if (bListening) {
 					if(socket.isClosed())
 					{
-						socket = new DatagramSocket(port);
-						socket.setSoTimeout(listentimeout_ms);
+						socket = new DatagramSocket(null);
+						socket.setReuseAddress(true);
+//						socket.setSoTimeout(listentimeout_ms);
 					}
 					
 					try {
 						System.out.println("Listening for incoming data...");
 						socket.receive(packet);
-						Thread.currentThread().sleep(1000);
+//						Thread.currentThread().sleep(1000);
 						data = packet.getData();
 						String request = new String(data, 0, packet.getLength());
 						System.out.println("Server got msg: " + packet.getAddress().getHostAddress() + " : " + packet.getPort() + " - " + request);
@@ -128,7 +129,7 @@ public class Network implements Runnable {
 		bListening = false;
 		try {
 			socket = new DatagramSocket(port);
-			socket.setSoTimeout(listentimeout_ms);
+//			socket.setSoTimeout(listentimeout_ms);
 			byte[] buf = s.getBytes();
 			DatagramPacket packet = new DatagramPacket(buf, buf.length, sendIP, port);
 			System.out.println("Sending message (" + s + ")...");
