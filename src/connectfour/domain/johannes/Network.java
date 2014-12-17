@@ -48,7 +48,7 @@ public class Network implements Runnable {
 	public void run() {
 		try {
 			socket = new DatagramSocket(port);
-			socket.setSoTimeout(0);
+			socket.setSoTimeout(listentimeout_ms);
 			
 			byte[] buf = new byte[1024];
 			byte[] data;
@@ -60,7 +60,7 @@ public class Network implements Runnable {
 					if(socket.isClosed())
 					{
 						socket = new DatagramSocket(port);
-						socket.setSoTimeout(0);
+						socket.setSoTimeout(listentimeout_ms);
 					}
 					
 					try {
@@ -135,7 +135,7 @@ public class Network implements Runnable {
 			DatagramPacket packet = new DatagramPacket(buf, buf.length, sendIP, port);
 			System.out.println("Sending message (" + s + ")...");
 			socket.send(packet);
-
+			Thread.currentThread().sleep(1000);
 			byte[] buffer = new byte[1024];
 			DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
 			System.out.println("Waiting for reply on message (" + s + ")...");
@@ -147,6 +147,8 @@ public class Network implements Runnable {
 			System.out.println("Client received: " + reply.getAddress().getHostAddress() + " : " + reply.getPort() + " - " + s);
 		} catch (IOException e) {
 			System.out.println("Exception in sendIt(String s): " + e.getMessage());
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 		socket.close();
 		bListening = true;

@@ -40,19 +40,19 @@ public class GameFrame
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 
-		JButton btnGiveUp = new JButton("I give up!");
-		btnGiveUp.setBounds(380, 135, 89, 40);
-		btnGiveUp.addActionListener(new ActionListener()
-		{
-
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				Game.endGame();
-
-			}
-		});
-		frame.getContentPane().add(btnGiveUp);
+//		JButton btnGiveUp = new JButton("I give up!");
+//		btnGiveUp.setBounds(380, 135, 89, 40);
+//		btnGiveUp.addActionListener(new ActionListener()
+//		{
+//
+//			@Override
+//			public void actionPerformed(ActionEvent e)
+//			{
+//				Game.endGame();
+//
+//			}
+//		});
+//		frame.getContentPane().add(btnGiveUp);
 
 		int a = 1;
 		for (int i = 0; i < 7; i++)
