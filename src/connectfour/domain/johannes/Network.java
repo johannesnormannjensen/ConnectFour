@@ -8,36 +8,36 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 
+import jdk.internal.jfr.events.SocketReadEvent;
 import sun.nio.cs.ext.ISCII91;
 import connectfour.gui.johannes.GameFrame;
 
-public class Network implements Runnable
-{
-//	private HashMap<String, String> protocol = new HashMap<String, String>();
-	
+public class Network implements Runnable {
+	// private HashMap<String, String> protocol = new HashMap<String, String>();
+
 	public static InetAddress sendIP;
 	private static int port;
 
 	private static boolean ingame = false;
 	private static boolean bListening = false;
+	
+	static DatagramSocket socketListen = null;
+	
+	private static int listentimeout_ms = 2000;
 
-	public Network(int receive)
-	{
-//		protocol.put("NEW GAME", "ACK NEW GAME");
-//		protocol.put("END GAME", "ACK END GAME");
-//		protocol.put("NEW GAME", "ACK NEW GAME");
+	public Network(int receive) {
+		// protocol.put("NEW GAME", "ACK NEW GAME");
+		// protocol.put("END GAME", "ACK END GAME");
+		// protocol.put("NEW GAME", "ACK NEW GAME");
 		Network.port = receive;
 		this.run();
 	}
 
-	public static String getLocIp()
-	{
+	public static String getLocIp() {
 		String ip = "";
-		try
-		{
+		try {
 			ip = InetAddress.getLocalHost().getHostAddress().toString();
-		} catch (UnknownHostException e)
-		{
+		} catch (UnknownHostException e) {
 			System.out.println("Could not receive local ip");
 			e.printStackTrace();
 		}
@@ -45,78 +45,77 @@ public class Network implements Runnable
 	}
 
 	@Override
-	public void run()
-	{
-		DatagramSocket socketListen = null;
-		try
-		{
+	public void run() {
+		try {
 			socketListen = new DatagramSocket(port);
-
+			socketListen.setSoTimeout(listentimeout_ms);
+			
 			byte[] buf = new byte[1024];
 			byte[] data;
 			DatagramPacket packet = new DatagramPacket(buf, buf.length);
 			bListening = true;
-			System.out
-					.println("Server socket created. Waiting for incoming data...");
-			while (true)
-			{
-				if(bListening)
-				{
-					socketListen.receive(packet);
-					data = packet.getData();
-					String request = new String(data, 0, packet.getLength());
-					System.out.println("Server got msg: "
-							+ packet.getAddress().getHostAddress() + " : "
-							+ packet.getPort() + " - " + request);
-					request = handleMsg(request);
-					DatagramPacket dp = new DatagramPacket(request.getBytes(),
-							request.getBytes().length, packet.getAddress(),
-							packet.getPort());
-					socketListen.send(dp);
-					if(request.equals("ACK END GAME")) System.exit(0);
+			System.out.println("Server socket created.");
+			while (true) {
+				if (bListening) {
+					if(socketListen.isClosed())
+					{
+						socketListen = new DatagramSocket(port);
+						socketListen.setSoTimeout(listentimeout_ms);
+					}
+					
+					if(socketListen.isConnected())
+					{
+						System.out.println("Waiting for incoming data...");
+						socketListen.receive(packet);
+						data = packet.getData();
+						String request = new String(data, 0, packet.getLength());
+						System.out.println("Server got msg: " + packet.getAddress().getHostAddress() + " : " + packet.getPort() + " - " + request);
+						request = handleMsg(request);
+						DatagramPacket dp = new DatagramPacket(request.getBytes(), request.getBytes().length, packet.getAddress(), packet.getPort());
+						socketListen.send(dp);
+						if (request.equals("ACK END GAME"))
+							System.exit(0);
+					}
 				}
 			}
 
-		} catch (SocketException e)
-		{
-			e.printStackTrace();
-		} catch (IOException e)
-		{
+		} catch (SocketException e) {
+			if(!bListening)
+			{
+				System.out.println("Error when waiting for incoming data.");
+				e.printStackTrace();
+			}
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 	}
 
-	private String handleMsg(String req)
-	{
-		if (req.equals("NEW GAME") && !ingame)
-		{
+	private String handleMsg(String req) {
+		if (req.equals("NEW GAME") && !ingame) {
 			ingame = true;
 			GameFrame.Instance();
 			return "ACK GAME";
 		}
-		if (req.startsWith("PLACE", 4))
-		{
+		if (req.startsWith("PLACE", 4)) {
 			System.out.println("he want's to place");
 			return "you can place";
 		}
-		if (req.equals("END GAME") && ingame)
-		{
+		if (req.equals("END GAME") && ingame) {
 			return "ACK END GAME";
 		} else
 			return "";
 	}
 
-	public static void sendIt(String s)
-	{
+	public static void sendIt(String s) {
 		DatagramSocket socketSend = null;
+		socketListen.close();
 		bListening = false;
-		try
-		{
+		try {
 			socketSend = new DatagramSocket();
+			socketSend.setSoTimeout(listentimeout_ms);
 			byte[] buf = s.getBytes();
-			DatagramPacket packet = new DatagramPacket(buf, buf.length,
-					InetAddress.getByName(sendIP.getHostAddress()), port);
+			DatagramPacket packet = new DatagramPacket(buf, buf.length, InetAddress.getByName(sendIP.getHostAddress()), port);
 			socketSend.send(packet);
 
 			byte[] buffer = new byte[1024];
@@ -126,37 +125,30 @@ public class Network implements Runnable
 			byte[] data = reply.getData();
 			s = new String(data, 0, reply.getLength());
 			handleRep(s);
-			System.out.println("Client received: " + reply.getAddress().getHostAddress() + " : "
-					+ reply.getPort() + " - " + s);
-		} catch (IOException e)
-		{
+			System.out.println("Client received: " + reply.getAddress().getHostAddress() + " : " + reply.getPort() + " - " + s);
+		} catch (IOException e) {
 			System.out.println("Couldn't send packet");
 			e.printStackTrace();
 		}
+		socketSend.close();
 		bListening = true;
 	}
 
-	public static void setSendIP(String sendIP)
-	{
-		try
-		{
-			Client.sendIP = InetAddress.getByName(sendIP);
-		} catch (UnknownHostException e)
-		{
-			e.printStackTrace();
+	public static void setSendIP(String _sendIP) {
+		try {
+			sendIP = InetAddress.getByName(_sendIP);
+		} catch (UnknownHostException e) {
+			System.out.println("Could not connect to IP: " + _sendIP);
 		}
 	}
 
-	public static void handleRep(String s)
-	{
-		if (s.equals("ACK GAME"))
-		{
+	public static void handleRep(String s) {
+		if (s.equals("ACK GAME")) {
 			GameFrame.Instance();
 		}
-		if (s.equals("ACK END GAME"))
-		{
+		if (s.equals("ACK END GAME")) {
 			System.exit(0);
 		}
 	}
-	
+
 }
