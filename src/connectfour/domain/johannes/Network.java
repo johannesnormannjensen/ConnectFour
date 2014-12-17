@@ -54,7 +54,7 @@ public class Network implements Runnable {
 			byte[] data;
 			DatagramPacket packet = new DatagramPacket(buf, buf.length);
 			bListening = true;
-			System.out.println("Server socket created.");
+			System.out.println("Socket created.");
 			while (true) {
 				if (bListening) {
 					if(socket.isClosed())
@@ -64,7 +64,7 @@ public class Network implements Runnable {
 					}
 					
 					try {
-						System.out.println("Waiting for incoming data...");
+						System.out.println("Listening for incoming data...");
 						socket.receive(packet);
 						data = packet.getData();
 						String request = new String(data, 0, packet.getLength());
@@ -72,7 +72,7 @@ public class Network implements Runnable {
 						setSendIP(packet.getAddress().getHostAddress());
 						handleMsg(request);
 					} catch (Exception e) {
-						System.out.println(e.getMessage());
+						System.out.println("Exception in run(): " + e.getMessage());
 					}
 					
 				}
@@ -90,6 +90,7 @@ public class Network implements Runnable {
 			GameFrame.Instance();
 		}
 		else if (s.equals("ACK NEW GAME")) {
+			ingame = true;
 			GameFrame.Instance();
 		}
 //		-------------------------------------------
@@ -132,12 +133,12 @@ public class Network implements Runnable {
 			socket.setSoTimeout(listentimeout_ms);
 			byte[] buf = s.getBytes();
 			DatagramPacket packet = new DatagramPacket(buf, buf.length, InetAddress.getByName(sendIP.getHostAddress()), port);
-			System.out.println("Sending...");
+			System.out.println("Sending message (" + s + ")...");
 			socket.send(packet);
 
 			byte[] buffer = new byte[1024];
 			DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
-			System.out.println("Waiting for reply...");
+			System.out.println("Waiting for reply on message (" + s + ")...");
 			socket.receive(reply);
 
 			byte[] data = reply.getData();
@@ -145,7 +146,7 @@ public class Network implements Runnable {
 			handleMsg(s);
 			System.out.println("Client received: " + reply.getAddress().getHostAddress() + " : " + reply.getPort() + " - " + s);
 		} catch (IOException e) {
-			System.out.println(e.getMessage());
+			System.out.println("Exception in sendIt(String s): " + e.getMessage());
 		}
 		socket.close();
 		bListening = true;
