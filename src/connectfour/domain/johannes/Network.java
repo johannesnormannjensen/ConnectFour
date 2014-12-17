@@ -84,7 +84,7 @@ public class Network implements Runnable {
 
 	private static void handleMsg(String s) {
 		if (s.equals("NEW GAME") && !ingame) {
-			sendIt("ACK NEW GAME");
+			sendIt("ACK NEW GAME", false);
 			ingame = true;
 			GameFrame.Instance().initialize("X", Color.BLUE, "O", Color.RED);
 		}
@@ -96,14 +96,14 @@ public class Network implements Runnable {
 		if (s.startsWith("MOVE")) {
 			System.out.println("he want's to place " + s.substring(s.length()-2).trim());
 			GameFrame.Instance().move(Integer.parseInt(s.substring(s.length()-2).trim()), false);
-			sendIt("ACK MOVE " + s.substring(s.length()-2).trim());
+			sendIt("ACK MOVE " + s.substring(s.length()-2).trim(), false);
 		}
 		if (s.startsWith("ACK MOVE")) {
 			System.out.println("It got placed");
 		}
 //		-------------------------------------------
 		if (s.equals("END GAME") && ingame) {
-			sendIt("ACK END GAME");
+			sendIt("ACK END GAME", false);
 			System.exit(0);
 		}
 		if (s.equals("ACK END GAME")) {
@@ -115,16 +115,16 @@ public class Network implements Runnable {
 	{
 		switch(msg)
 		{
-		case NEWGAME: sendIt("NEW GAME"); break;
-		case ENDGAME: sendIt("END GAME"); break;
-		case MOVE: sendIt("MOVE " + msgString); break;
+		case NEWGAME: sendIt("NEW GAME", true); break;
+		case ENDGAME: sendIt("END GAME", true); break;
+		case MOVE: sendIt("MOVE " + msgString, true); break;
 		default:
 			break;
 		
 		}
 	}
 
-	private static void sendIt(String s) {
+	private static void sendIt(String s, boolean waitforreply) {
 		socket.close();
 		bListening = false;
 		try {
@@ -135,15 +135,18 @@ public class Network implements Runnable {
 			System.out.println("Sending message (" + s + ")...");
 			socket.send(packet);
 			
-			byte[] buffer = new byte[1024];
-			DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
-			System.out.println("Waiting for reply on message (" + s + ")...");
-			socket.receive(reply);
+			if(waitforreply)
+			{
+				byte[] buffer = new byte[1024];
+				DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
+				System.out.println("Waiting for reply on message (" + s + ")...");
+				socket.receive(reply);
 
-			byte[] data = reply.getData();
-			s = new String(data, 0, reply.getLength());
-			handleMsg(s);
-			System.out.println("Client received: " + reply.getAddress().getHostAddress() + " : " + reply.getPort() + " - " + s);
+				byte[] data = reply.getData();
+				s = new String(data, 0, reply.getLength());
+				handleMsg(s);
+				System.out.println("Client received: " + reply.getAddress().getHostAddress() + " : " + reply.getPort() + " - " + s);
+			}
 		} catch (IOException e) {
 			System.out.println("Exception in sendIt(String s): " + e.getMessage());
 		}
