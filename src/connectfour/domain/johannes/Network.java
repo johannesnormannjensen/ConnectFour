@@ -69,7 +69,7 @@ public class Network implements Runnable {
 						data = packet.getData();
 						String request = new String(data, 0, packet.getLength());
 						System.out.println("Server got msg: " + packet.getAddress().getHostAddress() + " : " + packet.getPort() + " - " + request);
-						setSendIP(packet.getAddress());
+						setSendIP(packet.getAddress().getHostAddress());
 						handleMsg(request);
 					} catch (Exception e) {
 						System.out.println("Exception in run(): " + e.getMessage());
@@ -152,8 +152,12 @@ public class Network implements Runnable {
 		bListening = true;
 	}
 
-	public static void setSendIP(InetAddress _sendIP) {
-		sendIP = _sendIP;
-		System.out.println("Setting new sendIP: " + sendIP.getHostAddress());
+	public static void setSendIP(String _sendIP) {
+		try {
+			sendIP = InetAddress.getByName(_sendIP);
+			System.out.println("Setting new sendIP: " + sendIP + "(from " + _sendIP + ")");
+		} catch (UnknownHostException e) {
+			System.out.println("Could not connect to IP: " + _sendIP);
+		}
 	}
 }
