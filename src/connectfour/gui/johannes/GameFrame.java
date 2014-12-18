@@ -139,21 +139,20 @@ public class GameFrame
 	public void buttonClick(int ind)
 	{
 		int buttonIndex = findCol(ind); //finding the correct button to check for winning conditions
-		
-		Network.sendMsg(MESSAGE.MOVE, Integer.toString(ind));
-		move(ind, true);
-		System.out.println("placed at " + ind);
-		
 		System.out.println("Checking win");
-		//after the move is made we check for winning conditions
+		
 		int winLine = CheckWin(btns, buttonIndex); 
 		if(winLine >= 4)
 		{
 			System.out.println("I WIN ERMAGERD!!");
-			Network.sendMsg(MESSAGE.WINGAME, "");
+			Network.sendMsg(MESSAGE.WINGAME, Integer.toString(ind));
+			move(ind, true);
 		}
 		else 
 		{
+			Network.sendMsg(MESSAGE.MOVE, Integer.toString(ind));
+			move(ind, true);
+			System.out.println("placed at " + ind);
 			System.out.println("I have a line at " + winLine + " at best");
 		}
 	}
@@ -196,6 +195,8 @@ public class GameFrame
 		
 		if(hitsTemp > hits)
 			hits = hitsTemp;
+		hitsTemp = 1;
+		
 //		VERTICAL
 		//down
 		i = buttonIndex+1;
@@ -210,23 +211,36 @@ public class GameFrame
 			i++;
 		} while(i < 42);
 		
-//		DIAGONAL 1		
 		if(hitsTemp > hits)
 			hits = hitsTemp;
+		hitsTemp = 1; 
 		
-//		//diagonal 1 (up-left to down-right)
-//		i = buttonIndex+1;
-//		while(i >= 0)
-//		{
-//			if(buttonArray[i].getText().equals(myString))
-//				hitsTemp++;
-//			else 
-//				break;
-//			i -= 6;
-//		}
-//		
-//		if(hitsTemp > hits)
-//			hits = hitsTemp;
+//		DIAGONAL 1		
+		//diagonal 1 up-left
+		i = buttonIndex - 6 - 1;
+		while(i%6 != 5 && i >= 0) 
+		{
+			if(buttonArray[i].getText().equals(myString))
+				hitsTemp++;
+			else 
+				break;
+			i -= (6 + 1); //previous column and one piece up
+		}
+		
+		//diagonal 1 down-right
+		i = buttonIndex + 6 + 1;
+		while(i%6 != 0 && i < 42)
+		{
+			if(buttonArray[i].getText().equals(myString))
+				hitsTemp++;
+			else 
+				break;
+			i += (6 + 1); //next column and one piece down
+		}
+		
+		//TODO: the other diag dir
+		if(hitsTemp > hits)
+			hits = hitsTemp;
 		
 		System.out.println("found a line of " + hits + " hits");
 		return hits;
