@@ -43,36 +43,37 @@ public class Game
 	
 	public static void move(int ind, boolean myMove)
 	{
-		if(myturn)
+		int buttonIndex = GameFrame.Instance().findCol(ind);
+		if(buttonIndex != -1)
 		{
-			int buttonIndex = GameFrame.Instance().findCol(ind);
-			if(buttonIndex != -1)
+			int w = Game.CheckWin(GameFrame.Instance().getBtns(), buttonIndex, (myMove ? Game.myString : Game.opponentString));
+			if(w >= 4)
 			{
-				int w = Game.CheckWin(GameFrame.Instance().getBtns(), buttonIndex, (myMove ? Game.myString : Game.opponentString));
-				if(w >= 4)
+				if(myMove)
 				{
-					if(myMove)
-					{
-						Network.sendMsg(MESSAGE.WINGAME, ind + "");
-						JOptionPane.showMessageDialog(null, "YOU WON!");
-						System.exit(0);
-					}
-					else
-					{
-						Network.sendMsg(MESSAGE.ACKWINGAME, "");
-						JOptionPane.showMessageDialog(null, "YOU LOST!");
-						System.exit(0);
-					}
+					Network.sendMsg(MESSAGE.WINGAME, ind + "");
+					JOptionPane.showMessageDialog(null, "YOU WON!");
+					System.exit(0);
 				}
-				else if(myMove)
+				else
 				{
-					Network.sendMsg(MESSAGE.MOVE, ind + "");
-					System.out.println("Making a move " + ind);
+					Network.sendMsg(MESSAGE.ACKWINGAME, "");
+					JOptionPane.showMessageDialog(null, "YOU LOST!");
+					System.exit(0);
 				}
-				GameFrame.Instance().move(ind, myMove);
 			}
+			else if(myMove)
+			{
+				if(myturn)
+				{
+				Network.sendMsg(MESSAGE.MOVE, ind + "");
+				System.out.println("Making a move " + ind);
+				}
+			}
+			GameFrame.Instance().move(ind, myMove);
 			myturn=false;
 		}
+		
 	}
 	
 	public static int CheckWin(JButton[] buttonArray, int buttonIndex, String checkString)
