@@ -126,6 +126,7 @@ public class Network implements Runnable
 		if (s.equals("END GAME") && ingame)
 		{
 			sendIt("ACK END GAME", false);
+			JOptionPane.showMessageDialog(null, "Other player forfeits!");
 			System.exit(0);
 		}
 		if (s.equals("ACK END GAME"))
