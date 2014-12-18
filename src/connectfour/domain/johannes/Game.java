@@ -53,25 +53,29 @@ public class Game
 				{
 					Network.sendMsg(MESSAGE.WINGAME, ind + "");
 					JOptionPane.showMessageDialog(null, "YOU WON!");
-					System.exit(0);
+//					System.exit(0);
 				}
 				else
 				{
 					Network.sendMsg(MESSAGE.ACKWINGAME, "");
 					JOptionPane.showMessageDialog(null, "YOU LOST!");
-					System.exit(0);
+//					System.exit(0);
 				}
 			}
-			else if(myMove)
+			else if(myMove&&myturn)
 			{
-				if(myturn)
-				{
 				Network.sendMsg(MESSAGE.MOVE, ind + "");
 				System.out.println("Making a move " + ind);
-				}
+				GameFrame.Instance().move(ind, myMove);
+				myturn=false;
 			}
-			GameFrame.Instance().move(ind, myMove);
-			myturn=false;
+			else if (!myMove&&!myturn)
+			{
+				GameFrame.Instance().move(ind, myMove);
+				myturn=true;
+			}
+			
+			
 		}
 		
 	}

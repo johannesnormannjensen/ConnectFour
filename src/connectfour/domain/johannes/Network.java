@@ -112,7 +112,6 @@ public class Network implements Runnable
 			System.out.println("he want's to place " + s.substring(s.length() - 2).trim());
 			Game.move(Integer.parseInt(s.substring(s.length() - 2).trim()),	false);
 			sendIt("ACK MOVE " + s.substring(s.length() - 2).trim(), false);
-			Game.setMyturn(true);
 		}
 		if (s.startsWith("ACK MOVE"))
 		{
