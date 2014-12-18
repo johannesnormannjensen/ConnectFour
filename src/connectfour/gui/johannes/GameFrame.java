@@ -110,35 +110,18 @@ public class GameFrame
 	public int findCol(int num)
 	{
 		int a = Math.round((float)num/6f - 0.5f);
-		for (int i = a*6 + 5; i >= a; i--)
+		for (int i = a*6 + 5; i >= a*6; i--)
 		{
 			if (btns[i].getText().equals(""))
 			{
 				return i;
 			}
 		}
-		return a;
+		return -1;
 	}
 
 	public void buttonClick(int ind)
 	{
 		Game.move(ind, true);
-		
-//		int buttonIndex = findCol(ind); //finding the correct button to check for winning conditions
-//		System.out.println("Checking win");
-//		
-//		int winLine = Game.CheckWin(btns, buttonIndex, Game.myString); 
-//		if(winLine >= 4)
-//		{
-//			System.out.println("I WIN!");
-//			Network.sendMsg(MESSAGE.WINGAME, Integer.toString(ind));
-//			move(ind, true);
-//		}
-//		else 
-//		{
-//			Network.sendMsg(MESSAGE.MOVE, Integer.toString(ind));
-//			move(ind, true);
-//			System.out.println("Placed piece at " + ind + ". My longest connected line is " + winLine + ".");
-//		}
 	}
 }

@@ -3,6 +3,7 @@ package connectfour.domain.johannes;
 import java.awt.Color;
 
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 
 import connectfour.gui.johannes.GameFrame;
 
@@ -36,26 +37,29 @@ public class Game
 	public static void move(int ind, boolean myMove)
 	{
 		int buttonIndex = GameFrame.Instance().findCol(ind);
-		int w = Game.CheckWin(GameFrame.Instance().getBtns(), buttonIndex, (myMove ? Game.myString : Game.opponentString));
-		if(w >= 4)
+		if(buttonIndex != -1)
 		{
-			if(myMove)
+			int w = Game.CheckWin(GameFrame.Instance().getBtns(), buttonIndex, (myMove ? Game.myString : Game.opponentString));
+			if(w >= 4)
 			{
-				Network.sendMsg(MESSAGE.WINGAME, ind + "");
-				System.out.println("You won! " + ind);
+				if(myMove)
+				{
+					Network.sendMsg(MESSAGE.WINGAME, ind + "");
+					JOptionPane.showMessageDialog(null, "YOU WON!");
+				}
+				else
+				{
+					Network.sendMsg(MESSAGE.ACKWINGAME, "");
+					JOptionPane.showMessageDialog(null, "YOU LOST!");
+				}
 			}
-			else
+			else if(myMove)
 			{
-				Network.sendMsg(MESSAGE.ACKWINGAME, "");
-				System.out.println("You lost! " + ind);
+				Network.sendMsg(MESSAGE.MOVE, ind + "");
+				System.out.println("Making a move " + ind);
 			}
+			GameFrame.Instance().move(ind, myMove);
 		}
-		else
-		{
-			Network.sendMsg(MESSAGE.MOVE, ind + "");
-			System.out.println("Making a move " + ind);
-		}
-		GameFrame.Instance().move(ind, myMove);
 	}
 	
 	public static int CheckWin(JButton[] buttonArray, int buttonIndex, String checkString)
