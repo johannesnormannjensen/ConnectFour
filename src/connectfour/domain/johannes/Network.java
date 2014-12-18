@@ -122,11 +122,6 @@ public class Network implements Runnable
 		{
 			Game.move(Integer.parseInt(s.substring(s.length() - 2).trim()),	false);
 		}
-//		if (s.equals("ACK WIN GAME"))
-//		{
-//			JOptionPane.showMessageDialog(null, "YOU WIN!");
-//			System.exit(0);
-//		}
 		// -------------------------------------------
 		if (s.equals("END GAME") && ingame)
 		{

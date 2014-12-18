@@ -52,14 +52,16 @@ public class Game
 				if(myMove)
 				{
 					Network.sendMsg(MESSAGE.WINGAME, ind + "");
+					GameFrame.Instance().move(ind, myMove);
 					JOptionPane.showMessageDialog(null, "YOU WON!");
-//					System.exit(0);
+					System.exit(0);
 				}
 				else
 				{
 					Network.sendMsg(MESSAGE.ACKWINGAME, "");
+					GameFrame.Instance().move(ind, myMove);
 					JOptionPane.showMessageDialog(null, "YOU LOST!");
-//					System.exit(0);
+					System.exit(0);
 				}
 			}
 			else if(myMove&&myturn)
