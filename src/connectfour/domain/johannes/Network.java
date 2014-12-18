@@ -53,15 +53,17 @@ public class Network implements Runnable {
 //					}
 				
 				try {
-					DatagramSocket socket = new DatagramSocket();
+					DatagramSocket socket = new DatagramSocket(port);
 					socket.setSoTimeout(listentimeout_ms);
 					
 					byte[] buf = new byte[1024];
-					byte[] data;
-					DatagramPacket packet = new DatagramPacket(buf, buf.length, sendIP, port);
+					
+					DatagramPacket packet = new DatagramPacket(buf, buf.length);
 					System.out.println("Listening for incoming data...");
 					socket.receive(packet);
 					Thread.currentThread().sleep(1000);
+					
+					byte[] data;
 					data = packet.getData();
 					String request = new String(data, 0, packet.getLength());
 					System.out.println("Server got msg: " + packet.getAddress().getHostAddress() + " : " + packet.getPort() + " - " + request);
