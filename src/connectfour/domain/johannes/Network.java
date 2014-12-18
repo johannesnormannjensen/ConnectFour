@@ -99,21 +99,18 @@ public class Network implements Runnable
 		{
 			sendIt("ACK NEW GAME", false);
 			ingame = true;
-			GameFrame.Instance().initialize("X", Color.BLUE, "O", Color.RED);
+			Game.initialize("X", Color.BLUE, "O", Color.RED);
 		}
 		if (s.equals("ACK NEW GAME"))
 		{
 			ingame = true;
-			GameFrame.Instance().initialize("O", Color.RED, "X", Color.BLUE);
+			Game.initialize("O", Color.RED, "X", Color.BLUE);
 		}
 		// -------------------------------------------
 		if (s.startsWith("MOVE"))
 		{
-			System.out.println("he want's to place "
-					+ s.substring(s.length() - 2).trim());
-			GameFrame.Instance()
-					.move(Integer.parseInt(s.substring(s.length() - 2).trim()),
-							false);
+			System.out.println("he want's to place " + s.substring(s.length() - 2).trim());
+			Game.move(Integer.parseInt(s.substring(s.length() - 2).trim()),	false);
 			sendIt("ACK MOVE " + s.substring(s.length() - 2).trim(), false);
 		}
 		if (s.startsWith("ACK MOVE"))
@@ -123,14 +120,13 @@ public class Network implements Runnable
 		// -------------------------------------------
 		if(s.startsWith("WIN GAME"))
 		{
-//			GameFrame.Instance()
-//			.move(Integer.parseInt(s.substring(s.length() - 2).trim()),
-//					false);
-//			if(GameFrame.CheckWin(GameFrame.Instance().getBtns(), Integer.parseInt(s.substring(s.length() - 2).trim()))>=4)
-//				{
-				sendIt("ACK WIN GAME",false);
-				JOptionPane.showMessageDialog(null, "YOU LOSE!");
-//				}
+			Game.move(Integer.parseInt(s.substring(s.length() - 2).trim()),	false);
+//			int w = Game.CheckWin(GameFrame.Instance().getBtns(), Integer.parseInt(s.substring(s.length() - 2).trim()), Game.opponentString);
+//			if(w >= 4)
+//			{
+//				sendIt("ACK WIN GAME",false);
+//				JOptionPane.showMessageDialog(null, "YOU LOSE!");
+//			}
 		}
 		if (s.equals("ACK WIN GAME"))
 		{
@@ -163,7 +159,10 @@ public class Network implements Runnable
 			sendIt("MOVE " + msgString, true);
 			break;
 		case WINGAME:
-			sendIt("WIN GAME", true);
+			sendIt("WIN GAME " + msgString, true);
+			break;
+		case ACKWINGAME:
+			sendIt("ACK WIN GAME", false);
 			break;
 		default:
 			break;
