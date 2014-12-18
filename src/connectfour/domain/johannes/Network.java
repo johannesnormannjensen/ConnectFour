@@ -73,10 +73,6 @@ public class Network implements Runnable
 					handleMsg(request);
 				} catch (SocketException se)
 				{
-					if(socket!=null)
-					{
-						socket.close();
-					}
 					System.out.println("Stopped listening " + se.getMessage());
 				} catch (IOException e)
 				{
@@ -88,7 +84,11 @@ public class Network implements Runnable
 					}
 					
 				}
-
+				
+				if(socket!=null)
+				{
+					socket.close();
+				}
 			}
 		}
 	}
