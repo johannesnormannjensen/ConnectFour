@@ -1,5 +1,9 @@
 package connectfour.domain.johannes;
 
+import javax.swing.JButton;
+
+import connectfour.gui.johannes.GameFrame;
+
 
 public class Game
 {

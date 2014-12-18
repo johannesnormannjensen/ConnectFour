@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 
 
 
+
 //import connectfour.domain.johannes.Client;
 import connectfour.domain.johannes.Game;
 import connectfour.domain.johannes.MESSAGE;
@@ -25,7 +26,7 @@ public class GameFrame
 	private JButton[] btns = new JButton[42];
 	
 	private Color myColor, opponentColor;
-	private String myString, opponentString;
+	public String myString, opponentString;
 
 	private GameFrame()
 	{
@@ -141,6 +142,9 @@ public class GameFrame
 		Network.sendMsg(MESSAGE.MOVE, Integer.toString(ind));
 		move(ind, true);
 		System.out.println(ind);
+		
+		System.out.println("Checking win");
+//		CheckWin(btns, ind);
 	}
 
 	public void initialize(String myName, Color c, String opponentName, Color c2) 
@@ -150,4 +154,52 @@ public class GameFrame
 		opponentString = opponentName;
 		opponentColor = c2;
 	}
+	
+//	private int CheckWin(JButton[] buttonArray, int buttonIndex)
+//	{
+//		buttonIndex = findCol(buttonIndex); 
+//		int hits = 0; 
+//		int i = buttonIndex-6;
+//		//left
+//		while(i >= 0)
+//		{
+//			if(buttonArray[i].getText().equals(myString))
+//				hits++;
+//			else 
+//				break;
+//			i -= 6;
+//		}
+//		
+//		//right
+//		i = buttonIndex+6;
+//		while(i < 42)
+//		{
+//			if(buttonArray[i].getText().equals(myString))
+//				hits++;
+//			else 
+//				break;
+//			i += 6;
+//		}
+//		
+//		if(hits >= 3)
+//			return true;
+//		
+//		//down
+//		i = buttonIndex+1;
+//		do {
+//			if(i%6 == 0) //if we're at the top of the column, we're done
+//				break;
+//			
+//			if(buttonArray[i].getText().equals(myString))
+//				hits++;
+//			else 
+//				break;
+//			i++;
+//		} while(i < 42);
+//		
+//		
+//		
+//		System.out.println("hits " + hits);
+//		return hits;
+//	}
 }
