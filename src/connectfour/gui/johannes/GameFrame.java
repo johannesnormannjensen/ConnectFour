@@ -25,8 +25,14 @@ public class GameFrame
 	private int[][] pos = new int[7][6];
 	private JButton[] btns = new JButton[42];
 	
+	public JButton[] getBtns()
+	{
+		return btns;
+	}
+
 	private Color myColor, opponentColor;
-	public String myString, opponentString;
+	public static String myString;
+	public String opponentString;
 
 	private GameFrame()
 	{
@@ -165,7 +171,7 @@ public class GameFrame
 		opponentColor = c2;
 	}
 	
-	private int CheckWin(JButton[] buttonArray, int buttonIndex)
+	public static int CheckWin(JButton[] buttonArray, int buttonIndex)
 	{
 		int hits = 0, hitsTemp = 0; 
 		int i = buttonIndex-6;
