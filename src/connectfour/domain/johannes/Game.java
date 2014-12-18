@@ -13,10 +13,17 @@ public class Game
 	public static Color myColor, opponentColor;
 	public static String myString;
 	public static String opponentString;
+	private static boolean myturn = false;
 	
+	public static void setMyturn(boolean myturn)
+	{
+		Game.myturn = myturn;
+	}
+
 	public static void newGame()
 	{
 		Network.sendMsg(MESSAGE.NEWGAME, "");
+		myturn = true;
 	}
 
 	public static void endGame()
@@ -36,29 +43,35 @@ public class Game
 	
 	public static void move(int ind, boolean myMove)
 	{
-		int buttonIndex = GameFrame.Instance().findCol(ind);
-		if(buttonIndex != -1)
+		if(myturn)
 		{
-			int w = Game.CheckWin(GameFrame.Instance().getBtns(), buttonIndex, (myMove ? Game.myString : Game.opponentString));
-			if(w >= 4)
+			int buttonIndex = GameFrame.Instance().findCol(ind);
+			if(buttonIndex != -1)
 			{
-				if(myMove)
+				int w = Game.CheckWin(GameFrame.Instance().getBtns(), buttonIndex, (myMove ? Game.myString : Game.opponentString));
+				if(w >= 4)
 				{
-					Network.sendMsg(MESSAGE.WINGAME, ind + "");
-					JOptionPane.showMessageDialog(null, "YOU WON!");
+					if(myMove)
+					{
+						Network.sendMsg(MESSAGE.WINGAME, ind + "");
+						JOptionPane.showMessageDialog(null, "YOU WON!");
+						System.exit(0);
+					}
+					else
+					{
+						Network.sendMsg(MESSAGE.ACKWINGAME, "");
+						JOptionPane.showMessageDialog(null, "YOU LOST!");
+						System.exit(0);
+					}
 				}
-				else
+				else if(myMove)
 				{
-					Network.sendMsg(MESSAGE.ACKWINGAME, "");
-					JOptionPane.showMessageDialog(null, "YOU LOST!");
+					Network.sendMsg(MESSAGE.MOVE, ind + "");
+					System.out.println("Making a move " + ind);
 				}
+				GameFrame.Instance().move(ind, myMove);
 			}
-			else if(myMove)
-			{
-				Network.sendMsg(MESSAGE.MOVE, ind + "");
-				System.out.println("Making a move " + ind);
-			}
-			GameFrame.Instance().move(ind, myMove);
+			myturn=false;
 		}
 	}
 	

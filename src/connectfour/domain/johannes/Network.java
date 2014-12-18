@@ -112,6 +112,7 @@ public class Network implements Runnable
 			System.out.println("he want's to place " + s.substring(s.length() - 2).trim());
 			Game.move(Integer.parseInt(s.substring(s.length() - 2).trim()),	false);
 			sendIt("ACK MOVE " + s.substring(s.length() - 2).trim(), false);
+			Game.setMyturn(true);
 		}
 		if (s.startsWith("ACK MOVE"))
 		{
@@ -121,18 +122,12 @@ public class Network implements Runnable
 		if(s.startsWith("WIN GAME"))
 		{
 			Game.move(Integer.parseInt(s.substring(s.length() - 2).trim()),	false);
-//			int w = Game.CheckWin(GameFrame.Instance().getBtns(), Integer.parseInt(s.substring(s.length() - 2).trim()), Game.opponentString);
-//			if(w >= 4)
-//			{
-//				sendIt("ACK WIN GAME",false);
-//				JOptionPane.showMessageDialog(null, "YOU LOSE!");
-//			}
 		}
-		if (s.equals("ACK WIN GAME"))
-		{
-			JOptionPane.showMessageDialog(null, "YOU WIN!");
-			System.exit(0);
-		}
+//		if (s.equals("ACK WIN GAME"))
+//		{
+//			JOptionPane.showMessageDialog(null, "YOU WIN!");
+//			System.exit(0);
+//		}
 		// -------------------------------------------
 		if (s.equals("END GAME") && ingame)
 		{
