@@ -9,11 +9,6 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.JLabel;
 
-
-
-
-
-//import connectfour.domain.johannes.Client;
 import connectfour.domain.johannes.Game;
 import connectfour.domain.johannes.MESSAGE;
 import connectfour.domain.johannes.Network;
