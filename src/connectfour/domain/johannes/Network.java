@@ -45,16 +45,10 @@ public class Network implements Runnable {
 		System.out.println("Socket created.");
 		while (true) {
 			if (bListening) {
-//					if(socket.isClosed())
-//					{
-//						socket = new DatagramSocket(null);
-//						socket.setReuseAddress(true);
-//						socket.setSoTimeout(listentimeout_ms);
-//					}
-				
+				DatagramSocket socket = null;
 				try {
-					DatagramSocket socket = new DatagramSocket(port);
-					socket.setSoTimeout(listentimeout_ms);
+					socket = new DatagramSocket(port);
+//					socket.setSoTimeout(listentimeout_ms);
 					
 					byte[] buf = new byte[1024];
 					
@@ -62,15 +56,16 @@ public class Network implements Runnable {
 					System.out.println("Listening for incoming data...");
 					socket.receive(packet);
 					Thread.currentThread().sleep(1000);
-					
+					socket.close();
 					byte[] data;
 					data = packet.getData();
 					String request = new String(data, 0, packet.getLength());
 					System.out.println("Server got msg: " + packet.getAddress().getHostAddress() + " : " + packet.getPort() + " - " + request);
-					setSendIP(packet.getAddress().getHostAddress());
-					socket.close();
+					setSendIP(packet.getAddress().getHostAddress().trim());
+					
 					handleMsg(request);
 				} catch (Exception e) {
+					socket.close();
 					System.out.println("Exception in run(): " + e.getMessage());
 				}
 				
